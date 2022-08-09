@@ -15,12 +15,12 @@ func main() {
 	err := godotenv.Load(".env")
 
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	PORT := os.Getenv("SERVER_PORT")
+	PORT := os.Getenv("PORT")
 	JWT_SECRET := os.Getenv("JWT_SECRET")
-	DB_URL := os.Getenv("DB_URL")
+	DB_URL := os.Getenv("DATABASE_URL")
 
 	s, err := server.NewServer(context.Background(), &server.Config{
 		JWTSecret:   JWT_SECRET,
