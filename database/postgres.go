@@ -30,7 +30,7 @@ func (repo *PostgresRepository) InsertUser(ctx context.Context, user *model.User
 	return err
 }
 
-func (repo *PostgresRepository) GetUserByID(ctx context.Context, id string) (*model.User, error) {
+func (repo *PostgresRepository) GetUserById(ctx context.Context, id string) (*model.User, error) {
 	rows, err := repo.db.QueryContext(ctx, "SELECT id, email FROM users WHERE id = $1", id)
 	if err != nil {
 		return nil, err
