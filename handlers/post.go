@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/segmentio/ksuid"
 	"net/http"
+	"rest-websockets-go/events"
 	"rest-websockets-go/model"
 	"rest-websockets-go/repository"
 	"rest-websockets-go/server"
@@ -58,6 +59,11 @@ func InsertPostHandler(s server.Server) http.HandlerFunc {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+			var postMessage = model.WebsocketMessage{
+				Type:    events.POST_CREATED,
+				Payload: post,
+			}
+			s.Hub().Broadcast(postMessage, nil)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(PostResponse{
 				Id:          post.Id,
