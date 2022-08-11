@@ -10,35 +10,33 @@ import (
 	"rest-websockets-go/handlers"
 	"rest-websockets-go/middleware"
 	"rest-websockets-go/server"
-	"rest-websockets-go/websockets"
 )
 
 func main() {
 	err := godotenv.Load()
-
 	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+		log.Fatalf("Error loading .env file: %v\n", err)
 	}
 
 	PORT := os.Getenv("PORT")
 	JWT_SECRET := os.Getenv("JWT_SECRET")
-	DB_URL := os.Getenv("DATABASE_URL")
+	DATABASE_URL := os.Getenv("DATABASE_URL")
 
 	s, err := server.NewServer(context.Background(), &server.Config{
-		JWTSecret:   JWT_SECRET,
 		Port:        PORT,
-		DatabaseUrl: DB_URL,
+		JWTSecret:   JWT_SECRET,
+		DatabaseUrl: DATABASE_URL,
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error creating server %v\n", err)
 	}
 
 	s.Start(BindRoutes)
 }
 
 func BindRoutes(s server.Server, r *mux.Router) {
-	hub := websockets.NewHub()
+
 	api := r.PathPrefix("/api/v1").Subrouter()
 
 	api.Use(middleware.CheckAuthMiddleware(s))
@@ -55,6 +53,5 @@ func BindRoutes(s server.Server, r *mux.Router) {
 	r.HandleFunc("/api/v1/posts/{postId}", handlers.GetPostByIDHandler(s)).Methods(http.MethodGet)
 	r.HandleFunc("/api/v1/posts", handlers.ListPostHandler(s)).Methods(http.MethodGet)
 
-	go hub.Run()
-	r.HandleFunc("/ws", hub.HandleWebSocket)
+	r.HandleFunc("/ws", s.Hub().HandleWebSocket)
 }
