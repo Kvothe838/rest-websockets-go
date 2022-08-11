@@ -10,6 +10,7 @@ import (
 	"rest-websockets-go/handlers"
 	"rest-websockets-go/middleware"
 	"rest-websockets-go/server"
+	"rest-websockets-go/websockets"
 )
 
 func main() {
@@ -37,6 +38,7 @@ func main() {
 }
 
 func BindRoutes(s server.Server, r *mux.Router) {
+	hub := websockets.NewHub()
 	api := r.PathPrefix("/api/v1").Subrouter()
 
 	api.Use(middleware.CheckAuthMiddleware(s))
@@ -52,4 +54,6 @@ func BindRoutes(s server.Server, r *mux.Router) {
 	api.HandleFunc("/posts/{postId}", handlers.UpdatePostByIdHandler(s)).Methods(http.MethodPut)
 	r.HandleFunc("/api/v1/posts/{postId}", handlers.GetPostByIDHandler(s)).Methods(http.MethodGet)
 	r.HandleFunc("/api/v1/posts", handlers.ListPostHandler(s)).Methods(http.MethodGet)
+
+	r.HandleFunc("/ws", hub.HandleWebSocket)
 }
