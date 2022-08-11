@@ -1,3 +1,3 @@
-# Go Avanzado: REST y WebSockets
+# Advanced Go: REST y WebSockets
 
-Código perteneciente a las clases del [Curso de Go Avanzado: REST y WebSockets de Platzi](https://platzi.com/cursos/go-rest-websockets/).
+This code follows the classes of the [Platzi's Advanced Go course](https://platzi.com/cursos/go-rest-websockets/).
